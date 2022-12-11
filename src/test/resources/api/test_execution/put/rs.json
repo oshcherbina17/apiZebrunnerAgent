@@ -1,0 +1,10 @@
+{
+  "id": "regex:[\\d]",
+  "name": "Verify success login with wrong email",
+  "className": "com.qaprosoft.carina.demo.rozetka.RozetkaHomePageTest",
+  "methodName": "verifyLoginWithWrongEmail",
+  "startedAt": "2022-12-08T18:00:10Z",
+  "endedAt": "2022-12-08T18:00:40Z",
+  "maintainer": "oshcherbina",
+  "result": "type:String"
+}
