@@ -24,6 +24,12 @@ public class TestZebrunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     ApiConnection apiConnection = new ApiConnection();
+    ApiExecution apiExecution = new ApiExecution();
+
+    ////////////////////////////////////
+    String testId="";
+    String testRunId="";
+    ////////////////////////////////////
 
     @Test()
     public void refreshTokenTest() throws IOException {
@@ -34,19 +40,14 @@ public class TestZebrunner {
     @Test()
     public void runStartTest() {
         LOGGER.info("Test run start");
-        ApiExecution apiExecution = new ApiExecution();
-        TestRunStart testRunStart = new TestRunStart();
-        apiExecution.expectStatus(testRunStart, HTTPStatusCode.OK);
-        String testStatus = JsonService.readTestStatus(apiExecution.callApiMethod(testRunStart));
-        testRunStart.validateResponse();
-        Assert.assertTrue(testStatus.equalsIgnoreCase(TestStatus.IN_PROGRESS.getStatus()),
+        apiConnection.testRunStart();
+        Assert.assertTrue(apiConnection.getTestResultRun().equalsIgnoreCase(TestStatus.IN_PROGRESS.getStatus()),
                 "Test statuses are not equals");
     }
 
     @Test()
     public void executionStartTest() {
         LOGGER.info("Test execution start");
-        ApiExecution apiExecution = new ApiExecution();
         TestExecutionStart testExecutionStart = new TestExecutionStart();
         apiExecution.expectStatus(testExecutionStart, HTTPStatusCode.OK);
         String result = JsonService.readResult(apiExecution.callApiMethod(testExecutionStart));
@@ -63,15 +64,14 @@ public class TestZebrunner {
         String path = "src/test/resources/api/test_execution/put/test_execution_finish.properties";
         FileOutputStream output = new FileOutputStream(path);
         properties.store(output, null);
-        ApiExecution apiExecution = new ApiExecution();
         TestExecutionFinish testExecutionFinish = new TestExecutionFinish();
         testExecutionFinish.setProperties(properties);
         apiExecution.expectStatus(testExecutionFinish, HTTPStatusCode.OK);
         String result = JsonService.readResult(apiExecution.callApiMethod(testExecutionFinish));
         testExecutionFinish.validateResponse();
         apiConnection.testExecutionLogs();
-        String s = apiConnection.getTestRunId();
-        TestExecutionLogs testExecutionLogs = new TestExecutionLogs(s);
+        String testRunId = apiConnection.getTestRunId();
+        TestExecutionLogs testExecutionLogs = new TestExecutionLogs(testRunId);
         Assert.assertTrue(result.equalsIgnoreCase(TestStatus.PASSED.getStatus()),
                 "Test statuses are not equals");
     }
@@ -80,18 +80,16 @@ public class TestZebrunner {
     public void sampleSuccessTest() throws IOException {
         LOGGER.info("Sample success test started");
         Assert.assertEquals("1", "1");
-        apiConnection.testExecutionLogs();
-
-
+        //apiConnection.testExecutionLogs();
     }
 
     @Test
-    public void sampleFailTest() throws IOException {
+    public void sampleFailTest() {
         LOGGER.info("Sample fail test started");
     }
 
     @Test
-    public void sampleSkippedTest() throws IOException {
+    public void sampleSkippedTest()  {
         LOGGER.info("Sample skipped test started");
     }
 }

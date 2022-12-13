@@ -15,7 +15,5 @@ public class ApiExecution {
         return response.asString().isEmpty() ? null : response.asString();
     }
 
-    public void validateResponse(AbstractApiMethodV2 method, JSONCompareMode mode, String... validationFlags) {
-        method.validateResponse(mode, validationFlags);
-    }
+
 }

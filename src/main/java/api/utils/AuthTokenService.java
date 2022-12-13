@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class AuthTokenService {
+    static ApiExecution apiExecution = new ApiExecution();
+
+    static TestRunStart testRunStart = new TestRunStart();
 
     private static String authToken;
 
@@ -24,10 +27,10 @@ public class AuthTokenService {
     }
 
     public static void refreshAuthToken() throws IOException {
-        ApiExecution apiExecution = new ApiExecution();
         Authentication authentication = new Authentication();
         apiExecution.expectStatus(authentication, HTTPStatusCode.OK);
         authToken = JsonService.readAuthToken(apiExecution.callApiMethod(authentication));
+        /////////////////////
         authentication.validateResponse();
         Properties properties = new Properties();
         CryptoTool cryptoTool = new CryptoTool();
@@ -35,19 +38,19 @@ public class AuthTokenService {
         properties.put(JsonValues.AUTH_TOKEN.getValue(), "{crypt:" + str + "}");
         FileOutputStream output = new FileOutputStream("src/main/resources/_testdata.properties");
         properties.store(output, null);
+        //////////////////
+
     }
 
     public static String getTestRunId() {
-        ApiExecution executor = new ApiExecution();
-        TestRunStart testRunStart = new TestRunStart();
-        executor.expectStatus(testRunStart, HTTPStatusCode.OK);
-        return JsonService.readId(executor.callApiMethod(testRunStart));
+        //TestRunStart testRunStart = new TestRunStart();
+        apiExecution.expectStatus(testRunStart, HTTPStatusCode.OK);////////
+        return JsonService.readId(apiExecution.callApiMethod(testRunStart));
     }
 
     public static String getTestId(String testRunId) {
-        ApiExecution executor = new ApiExecution();
         TestExecutionStart testExecutionStart = new TestExecutionStart(testRunId);
-        executor.expectStatus(testExecutionStart, HTTPStatusCode.OK);
-        return JsonService.readId(executor.callApiMethod(testExecutionStart));
+        apiExecution.expectStatus(testExecutionStart, HTTPStatusCode.OK);
+        return JsonService.readId(apiExecution.callApiMethod(testExecutionStart));
     }
 }
