@@ -22,8 +22,6 @@ public class ApiConnection {
 
     Properties properties = new Properties();
 
-    AuthTokenService authTokenService = new AuthTokenService();
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private String testRunId;
@@ -35,6 +33,8 @@ public class ApiConnection {
     private String testSessionId;
 
     private String testResultRun;
+
+    private String testResultExecution;
 
     public ApiConnection() {
     }
@@ -79,28 +79,37 @@ public class ApiConnection {
         this.testResultRun = testResultRun;
     }
 
+    public String getTestResultExecution() {
+        return testResultExecution;
+    }
+
+    public void setTestResultExecution(String testResultExecution) {
+        this.testResultExecution = testResultExecution;
+    }
+
     public void testRunStart() {
-        testRunId = authTokenService.getTestRunId();//////
-        testResultRun=JsonService.readTestStatus(apiExecution.callApiMethod(testRunStart));//two launchers (id,status id)
+        apiExecution.expectStatus(testRunStart, HTTPStatusCode.OK);
+        String rs = apiExecution.callApiMethod(testRunStart);
+        setTestRunId(JsonService.readId(rs));
+        setTestResultRun(JsonService.readTestStatus(rs));
         testRunStart.validateResponse();
     }
 
     public void testExecutionStart() {
-        TestExecutionStart testExecutionStart = new TestExecutionStart(testRunId);
+        TestExecutionStart testExecutionStart = new TestExecutionStart(getTestRunId());
         apiExecution.expectStatus(testExecutionStart, HTTPStatusCode.OK);
-        testId = JsonService.readId(apiExecution.callApiMethod(testExecutionStart));
-        LOGGER.info(testId);
+        String result = apiExecution.callApiMethod(testExecutionStart);
+        setTestId(JsonService.readId(result));
+        setTestResultExecution(JsonService.readResult(result));
+        testExecutionStart.validateResponse();
+
     }
 
     public void testExecutionFinish(TestStatus status) throws IOException {
-        properties.put(JsonValues.TEST_RESULT.getValue(), status.getStatus());
-        String path = "src/test/resources/api/test_execution/put/test_execution_finish.properties";
-        FileOutputStream output = new FileOutputStream(path);
-        properties.store(output, null);
-        TestExecutionFinish testExecutionFinish = new TestExecutionFinish(testRunId, testId);
-        testExecutionFinish.setProperties(properties);
+        TestExecutionFinish testExecutionFinish = new TestExecutionFinish(getTestRunId(), getTestId(), status.getStatus());
         apiExecution.expectStatus(testExecutionFinish, HTTPStatusCode.OK);
-        apiExecution.callApiMethod(testExecutionFinish);
+        setTestResultExecution(JsonService.readResult(apiExecution.callApiMethod(testExecutionFinish)));
+        testExecutionFinish.validateResponse();
     }
 
     public void testRunExecutionFinish() {
@@ -115,7 +124,6 @@ public class ApiConnection {
         TestExecutionStart testExecutionStart = new TestExecutionStart(testRunId);
         testId = JsonService.readId(apiExecution.callApiMethod(testExecutionStart));
         ////////////////////////////////////////////////////////////////////
-      //  Properties properties = new Properties();
         properties.put(JsonValues.TEST_ID.getValue(), testId);
         String path = "src/test/resources/api/test_execution/logs/logs.properties";
         FileOutputStream output = new FileOutputStream(path);
@@ -128,7 +136,6 @@ public class ApiConnection {
     }
 
     public void testSessionStart() throws IOException {
-      //  Properties properties = new Properties();
         properties.put(JsonValues.TEST_IDS.getValue(), testId);
         String path = "src/test/resources/api/test_session/test_session.properties";
         FileOutputStream output = new FileOutputStream(path);
@@ -140,7 +147,6 @@ public class ApiConnection {
     }
 
     public void testSessionFinish() throws IOException {
-      //  Properties properties = new Properties();
         properties.put(JsonValues.TEST_IDS.getValue(), testId);
         String path = "src/test/resources/api/test_session/test_session.properties";
         FileOutputStream output = new FileOutputStream(path);
@@ -151,7 +157,7 @@ public class ApiConnection {
         apiExecution.callApiMethod(testSessionFinish);
     }
 
-    public void startTest(TestStatus status) throws IOException {
+    public void runTest(TestStatus status) throws IOException {
         testRunStart();
         testExecutionStart();
         testExecutionLogs();

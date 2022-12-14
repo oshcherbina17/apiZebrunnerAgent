@@ -3,7 +3,6 @@ package api.utils;
 import api.enums.HTTPStatusCode;
 import com.qaprosoft.carina.core.foundation.api.AbstractApiMethodV2;
 import io.restassured.response.Response;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 public class ApiExecution {
     public void expectStatus(AbstractApiMethodV2 method, HTTPStatusCode status) {

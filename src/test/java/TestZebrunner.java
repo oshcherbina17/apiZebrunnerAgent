@@ -1,35 +1,19 @@
 
-import api.enums.HTTPStatusCode;
-import api.enums.JsonValues;
+
 import api.enums.TestStatus;
-import api.postMethods.TestExecutionLogs;
-import api.postMethods.TestExecutionStart;
-import api.postMethods.TestRunStart;
-import api.putMethods.TestExecutionFinish;
 import api.utils.ApiConnection;
-import api.utils.ApiExecution;
 import api.utils.AuthTokenService;
-import api.utils.JsonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.Properties;
 
 public class TestZebrunner {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     ApiConnection apiConnection = new ApiConnection();
-    ApiExecution apiExecution = new ApiExecution();
-
-    ////////////////////////////////////
-    String testId="";
-    String testRunId="";
-    ////////////////////////////////////
 
     @Test()
     public void refreshTokenTest() throws IOException {
@@ -38,7 +22,7 @@ public class TestZebrunner {
     }
 
     @Test()
-    public void runStartTest() {
+    public void runStartTest() throws IOException {
         LOGGER.info("Test run start");
         apiConnection.testRunStart();
         Assert.assertTrue(apiConnection.getTestResultRun().equalsIgnoreCase(TestStatus.IN_PROGRESS.getStatus()),
@@ -48,10 +32,9 @@ public class TestZebrunner {
     @Test()
     public void executionStartTest() {
         LOGGER.info("Test execution start");
-        TestExecutionStart testExecutionStart = new TestExecutionStart();
-        apiExecution.expectStatus(testExecutionStart, HTTPStatusCode.OK);
-        String result = JsonService.readResult(apiExecution.callApiMethod(testExecutionStart));
-        testExecutionStart.validateResponse();
+        apiConnection.testRunStart();
+        apiConnection.testExecutionStart();
+        String result = apiConnection.getTestResultExecution();
         Assert.assertTrue(result.equalsIgnoreCase(TestStatus.IN_PROGRESS.getStatus()),
                 "Test statuses are not equals");
     }
@@ -59,28 +42,19 @@ public class TestZebrunner {
     @Test()
     public void executionFinishTest() throws IOException {
         LOGGER.info("Test execution finish");
-        Properties properties = new Properties();
-        properties.put(JsonValues.TEST_RESULT.getValue(), TestStatus.PASSED.getStatus());
-        String path = "src/test/resources/api/test_execution/put/test_execution_finish.properties";
-        FileOutputStream output = new FileOutputStream(path);
-        properties.store(output, null);
-        TestExecutionFinish testExecutionFinish = new TestExecutionFinish();
-        testExecutionFinish.setProperties(properties);
-        apiExecution.expectStatus(testExecutionFinish, HTTPStatusCode.OK);
-        String result = JsonService.readResult(apiExecution.callApiMethod(testExecutionFinish));
-        testExecutionFinish.validateResponse();
-        apiConnection.testExecutionLogs();
-        String testRunId = apiConnection.getTestRunId();
-        TestExecutionLogs testExecutionLogs = new TestExecutionLogs(testRunId);
-        Assert.assertTrue(result.equalsIgnoreCase(TestStatus.PASSED.getStatus()),
-                "Test statuses are not equals");
+        apiConnection.testRunStart();
+        apiConnection.testExecutionStart();
+        apiConnection.testExecutionFinish(TestStatus.PASSED);
+        String result = apiConnection.getTestResultExecution();
+        Assert.assertTrue(result.equalsIgnoreCase(TestStatus.PASSED
+                .getStatus()), "Actual test result differs from the expected one");
     }
 
     @Test
     public void sampleSuccessTest() throws IOException {
         LOGGER.info("Sample success test started");
         Assert.assertEquals("1", "1");
-        //apiConnection.testExecutionLogs();
+        apiConnection.testExecutionLogs();
     }
 
     @Test
@@ -89,7 +63,7 @@ public class TestZebrunner {
     }
 
     @Test
-    public void sampleSkippedTest()  {
+    public void sampleSkippedTest() {
         LOGGER.info("Sample skipped test started");
     }
 }
