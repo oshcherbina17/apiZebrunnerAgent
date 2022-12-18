@@ -45,7 +45,8 @@ public class JsonService {
     }
 
     public static String readAuthToken(String response){
-        return authToken = JsonPath.from(response).get(JsonValues.AUTH_TOKEN.getValue()).toString();
+       return authToken = JsonPath.from(response).get(JsonValues.AUTH_TOKEN.getValue()).toString();
+        //return authToken = JsonPath.from("src/test/resources/api/auth/post/rs.json").get("authToken");
     }
 
     public static String readId(String response){

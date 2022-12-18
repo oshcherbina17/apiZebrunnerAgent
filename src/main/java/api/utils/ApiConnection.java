@@ -1,26 +1,22 @@
 package api.utils;
 
 import api.enums.HTTPStatusCode;
-import api.enums.JsonValues;
 import api.enums.TestStatus;
 import api.postMethods.*;
 import api.putMethods.TestExecutionFinish;
+import api.putMethods.TestExecutionLabels;
 import api.putMethods.TestRunExecutionFinish;
 import api.putMethods.TestSessionFinish;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.Properties;
 
 import static api.utils.AuthTokenService.testRunStart;
 
 public class ApiConnection {
     ApiExecution apiExecution = new ApiExecution();
-
-    Properties properties = new Properties();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -102,7 +98,6 @@ public class ApiConnection {
         setTestId(JsonService.readId(result));
         setTestResultExecution(JsonService.readResult(result));
         testExecutionStart.validateResponse();
-
     }
 
     public void testExecutionFinish(TestStatus status) throws IOException {
@@ -119,51 +114,47 @@ public class ApiConnection {
     }
 
     public void testExecutionLogs() throws IOException {
-        TestRunStart testRunStart = new TestRunStart();
-        testRunId = JsonService.readId(apiExecution.callApiMethod(testRunStart));
-        TestExecutionStart testExecutionStart = new TestExecutionStart(testRunId);
-        testId = JsonService.readId(apiExecution.callApiMethod(testExecutionStart));
-        ////////////////////////////////////////////////////////////////////
-        properties.put(JsonValues.TEST_ID.getValue(), testId);
-        String path = "src/test/resources/api/test_execution/logs/logs.properties";
-        FileOutputStream output = new FileOutputStream(path);
-        properties.store(output, null);
-
-        TestExecutionLogs testExecutionLogs = new TestExecutionLogs(testRunId);
-        testExecutionLogs.setProperties(properties);
+        TestExecutionLogs testExecutionLogs = new TestExecutionLogs(Helper.getHelper().getTestRunId());
+        // testExecutionLogs.setProperties(properties);
         apiExecution.expectStatus(testExecutionLogs, HTTPStatusCode.ACCEPTED);
         apiExecution.callApiMethod(testExecutionLogs);
+        /////////////
     }
 
     public void testSessionStart() throws IOException {
-        properties.put(JsonValues.TEST_IDS.getValue(), testId);
-        String path = "src/test/resources/api/test_session/test_session.properties";
-        FileOutputStream output = new FileOutputStream(path);
-        properties.store(output, null);
-        TestSessionStart testSessionStart = new TestSessionStart(testRunId);
-        testSessionStart.setProperties(properties);
+        TestSessionStart testSessionStart = new TestSessionStart(Helper.getHelper().getTestRunId());
         apiExecution.expectStatus(testSessionStart, HTTPStatusCode.OK);
         testSessionId = JsonService.readId(apiExecution.callApiMethod(testSessionStart));
+         setTestSessionId(JsonService.readId(apiExecution.callApiMethod(testSessionStart)));
+        //Helper.getHelper().setTestSessionId(JsonService.readId(apiExecution.callApiMethod(testSessionStart)));
+        testSessionStart.validateResponse();
+        /////////
     }
 
     public void testSessionFinish() throws IOException {
-        properties.put(JsonValues.TEST_IDS.getValue(), testId);
-        String path = "src/test/resources/api/test_session/test_session.properties";
-        FileOutputStream output = new FileOutputStream(path);
-        properties.store(output, null);
-        TestSessionFinish testSessionFinish = new TestSessionFinish(testRunId, testSessionId);
-        testSessionFinish.setProperties(properties);
+        TestSessionFinish testSessionFinish = new TestSessionFinish(getTestRunId(),getTestSessionId());
         apiExecution.expectStatus(testSessionFinish, HTTPStatusCode.OK);
         apiExecution.callApiMethod(testSessionFinish);
+        testSessionFinish.validateResponse();
+        ////////////////////////
+    }
+
+    public void testExecutionLabels() {
+        TestExecutionLabels testExecutionLabels = new TestExecutionLabels(Helper.getHelper().getTestRunId(),
+                Helper.getHelper().getTestId());
+        apiExecution.expectStatus(testExecutionLabels, HTTPStatusCode.OK_NO_CONTENT);
+        apiExecution.callApiMethod(testExecutionLabels);
+        ///
     }
 
     public void runTest(TestStatus status) throws IOException {
         testRunStart();
         testExecutionStart();
-        testExecutionLogs();
+        //testExecutionLogs();
+        //testExecutionLabels();
         testExecutionFinish(status);
-        testSessionStart();
+       // testSessionStart();
         testRunExecutionFinish();
-        testSessionFinish();
+       // testSessionFinish();
     }
 }

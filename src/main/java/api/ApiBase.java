@@ -1,6 +1,7 @@
 package api;
 
 import api.enums.JsonValues;
+import api.utils.AuthTokenService;
 import com.qaprosoft.carina.core.foundation.api.AbstractApiMethodV2;
 import com.qaprosoft.carina.core.foundation.utils.R;
 
@@ -23,6 +24,7 @@ public abstract class ApiBase extends AbstractApiMethodV2 {
     }
 
     private void setAuthToken() {
-        setHeaders("Authorization=Bearer "+ R.TESTDATA.getDecrypted(JsonValues.AUTH_TOKEN.getValue()));
+      setHeaders("Authorization=Bearer "+ R.TESTDATA.getDecrypted(JsonValues.AUTH_TOKEN.getValue()));
+      //  setHeaders("Authorization=Bearer " + AuthTokenService.getAuthToken());
     }
 }

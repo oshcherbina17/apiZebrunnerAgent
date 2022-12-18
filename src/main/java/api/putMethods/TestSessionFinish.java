@@ -1,6 +1,9 @@
 package api.putMethods;
 
 import api.ApiBase;
+import api.utils.ApiConnection;
+import api.utils.Helper;
+import api.utils.JsonService;
 import com.qaprosoft.carina.core.foundation.utils.R;
 
 public class TestSessionFinish extends ApiBase {
@@ -9,6 +12,6 @@ public class TestSessionFinish extends ApiBase {
         replaceUrlPlaceholder("base_url", R.CONFIG.get("api_url"));
         replaceUrlPlaceholder("testRunId", testRunId);
         replaceUrlPlaceholder("testSessionId", testSessionId);
+        addProperty("testIds", Helper.getHelper().getTestId());
     }
-
 }

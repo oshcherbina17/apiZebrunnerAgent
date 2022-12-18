@@ -30,20 +30,9 @@ public class AuthTokenService {
         Authentication authentication = new Authentication();
         apiExecution.expectStatus(authentication, HTTPStatusCode.OK);
         authToken = JsonService.readAuthToken(apiExecution.callApiMethod(authentication));
-        /////////////////////
-        authentication.validateResponse();
-        Properties properties = new Properties();
-        CryptoTool cryptoTool = new CryptoTool();
-        String str = cryptoTool.encrypt(authToken);
-        properties.put(JsonValues.AUTH_TOKEN.getValue(), "{crypt:" + str + "}");
-        FileOutputStream output = new FileOutputStream("src/main/resources/_testdata.properties");
-        properties.store(output, null);
-        //////////////////
-
     }
 
     public static String getTestRunId() {
-        //TestRunStart testRunStart = new TestRunStart();
         apiExecution.expectStatus(testRunStart, HTTPStatusCode.OK);////////
         return JsonService.readId(apiExecution.callApiMethod(testRunStart));
     }

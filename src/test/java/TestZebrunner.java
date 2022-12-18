@@ -47,23 +47,39 @@ public class TestZebrunner {
         apiConnection.testExecutionFinish(TestStatus.PASSED);
         String result = apiConnection.getTestResultExecution();
         Assert.assertTrue(result.equalsIgnoreCase(TestStatus.PASSED
-                .getStatus()), "Actual test result differs from the expected one");
+                .getStatus()), "Test statuses are not equals");
     }
 
     @Test
     public void sampleSuccessTest() throws IOException {
         LOGGER.info("Sample success test started");
-        Assert.assertEquals("1", "1");
-        apiConnection.testExecutionLogs();
+        apiConnection.runTest(TestStatus.PASSED);
+        String testStatus = apiConnection.getStatus();
+        LOGGER.info("Sample success test finished");
+        LOGGER.info(testStatus);
+        Assert.assertTrue(testStatus.equalsIgnoreCase(TestStatus.PASSED.getStatus()),
+                "Test statuses are not equals");
     }
 
     @Test
-    public void sampleFailTest() {
+    public void sampleFailTest() throws IOException {
         LOGGER.info("Sample fail test started");
+        apiConnection.runTest(TestStatus.FAILED);
+        String testStatus = apiConnection.getStatus();
+        LOGGER.info("Sample failed test finished");
+        LOGGER.info(testStatus);
+        Assert.assertTrue(testStatus.equalsIgnoreCase(TestStatus.FAILED.getStatus()),
+                "Test statuses are not equals");
     }
 
     @Test
-    public void sampleSkippedTest() {
+    public void sampleSkippedTest() throws IOException {
         LOGGER.info("Sample skipped test started");
+        apiConnection.runTest(TestStatus.SKIPPED);
+        String testStatus = apiConnection.getStatus();
+        LOGGER.info("Sample skipped test finished");
+        LOGGER.info(testStatus);
+        Assert.assertTrue(testStatus.equalsIgnoreCase(TestStatus.SKIPPED.getStatus()),
+                "Test statuses are not equals");
     }
 }
