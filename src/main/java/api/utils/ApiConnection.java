@@ -1,6 +1,5 @@
 package api.utils;
 
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 import org.slf4j.Logger;
@@ -10,13 +9,12 @@ import api.enums.HTTPStatusCode;
 import api.enums.TestStatus;
 import api.postMethods.TestExecutionLogs;
 import api.postMethods.TestExecutionStart;
+import api.postMethods.TestRunStart;
 import api.postMethods.TestSessionStart;
 import api.putMethods.TestExecutionFinish;
 import api.putMethods.TestExecutionLabels;
 import api.putMethods.TestRunExecutionFinish;
 import api.putMethods.TestSessionFinish;
-
-import static api.utils.AuthTokenService.testRunStart;
 
 public class ApiConnection {
     ApiExecution apiExecution = new ApiExecution();
@@ -87,6 +85,7 @@ public class ApiConnection {
     }
 
     public void testRunStart() {
+        TestRunStart testRunStart = new TestRunStart();//
         apiExecution.expectStatus(testRunStart, HTTPStatusCode.OK);
         String result = apiExecution.callApiMethod(testRunStart);
         setTestRunId(JsonService.readId(result));
@@ -103,7 +102,7 @@ public class ApiConnection {
         testExecutionStart.validateResponse();
     }
 
-    public void testExecutionFinish(TestStatus status) throws IOException {
+    public void testExecutionFinish(TestStatus status) {
         TestExecutionFinish testExecutionFinish = new TestExecutionFinish(getTestRunId(), getTestId(), status.getStatus());
         apiExecution.expectStatus(testExecutionFinish, HTTPStatusCode.OK);
         setTestResultExecution(JsonService.readResult(apiExecution.callApiMethod(testExecutionFinish)));
@@ -116,21 +115,21 @@ public class ApiConnection {
         status = JsonService.readTestStatus(apiExecution.callApiMethod(testRunExecutionFinish));
     }
 
-    public void testExecutionLogs() throws IOException {
+    public void testExecutionLogs() {
         TestExecutionLogs testExecutionLogs = new TestExecutionLogs(getTestRunId(), getTestId());
         apiExecution.expectStatus(testExecutionLogs, HTTPStatusCode.ACCEPTED);
         apiExecution.callApiMethod(testExecutionLogs);
     }
 
-    public void testSessionStart() throws IOException {
+    public void testSessionStart() {
         TestSessionStart testSessionStart = new TestSessionStart(getTestRunId(), getTestId());
         apiExecution.expectStatus(testSessionStart, HTTPStatusCode.OK);
         testSessionId = JsonService.readId(apiExecution.callApiMethod(testSessionStart));
-        setTestSessionId(JsonService.readId(apiExecution.callApiMethod(testSessionStart)));
+        setTestSessionId(testSessionId);
         testSessionStart.validateResponse();
     }
 
-    public void testSessionFinish() throws IOException {
+    public void testSessionFinish() {
         TestSessionFinish testSessionFinish = new TestSessionFinish(getTestRunId(), getTestSessionId(), getTestId());
         apiExecution.expectStatus(testSessionFinish, HTTPStatusCode.OK);
         apiExecution.callApiMethod(testSessionFinish);
@@ -141,16 +140,13 @@ public class ApiConnection {
         TestExecutionLabels testExecutionLabels = new TestExecutionLabels(getTestRunId(), getTestId());
         apiExecution.expectStatus(testExecutionLabels, HTTPStatusCode.OK_NO_CONTENT);
         apiExecution.callApiMethod(testExecutionLabels);
-        ///
-
     }
 
-    public void runTest(TestStatus status) throws IOException {
-       // AuthTokenService.refreshAuthToken();
+    public void runTest(TestStatus status) {
         testRunStart();
         testExecutionStart();
         testExecutionLogs();
-        //testExecutionLabels();
+        testExecutionLabels();
         testExecutionFinish(status);
         testSessionStart();
         testRunExecutionFinish();

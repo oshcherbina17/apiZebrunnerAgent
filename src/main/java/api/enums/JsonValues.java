@@ -4,9 +4,7 @@ public enum JsonValues {
     AUTH_TOKEN ("authToken"),
     ID("id"),
     TEST_STATUS("status"),
-    TEST_RESULT("result"),
-    TEST_IDS("testIds"),
-    TEST_ID("testId");
+    TEST_RESULT("result");
 
     private final String value;
 

@@ -16,13 +16,13 @@ public class TestZebrunner {
     ApiConnection apiConnection = new ApiConnection();
 
     @Test()
-    public void refreshTokenTest() throws IOException {
+    public void refreshTokenTest() {
         LOGGER.info("Authentication");
         AuthTokenService.refreshAuthToken();
     }
 
     @Test()
-    public void runStartTest() throws IOException {
+    public void runStartTest() {
         LOGGER.info("Test run start");
        // AuthTokenService.getAuthToken();
         apiConnection.testRunStart();
@@ -41,7 +41,7 @@ public class TestZebrunner {
     }
 
     @Test()
-    public void executionFinishTest() throws IOException {
+    public void executionFinishTest() {
         LOGGER.info("Test execution finish");
         apiConnection.testRunStart();
         apiConnection.testExecutionStart();
@@ -52,7 +52,7 @@ public class TestZebrunner {
     }
 
     @Test
-    public void sampleSuccessTest() throws IOException {
+    public void sampleSuccessTest() {
         LOGGER.info("Sample success test started");
         apiConnection.runTest(TestStatus.PASSED);
         String testStatus = apiConnection.getStatus();
@@ -63,7 +63,7 @@ public class TestZebrunner {
     }
 
     @Test
-    public void sampleFailTest() throws IOException {
+    public void sampleFailTest()  {
         LOGGER.info("Sample fail test started");
         apiConnection.runTest(TestStatus.FAILED);
         String testStatus = apiConnection.getStatus();
@@ -74,7 +74,7 @@ public class TestZebrunner {
     }
 
     @Test
-    public void sampleSkippedTest() throws IOException {
+    public void sampleSkippedTest()  {
         LOGGER.info("Sample skipped test started");
         //AuthTokenService.refreshAuthToken();
         apiConnection.runTest(TestStatus.SKIPPED);
