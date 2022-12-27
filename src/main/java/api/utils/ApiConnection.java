@@ -1,17 +1,20 @@
 package api.utils;
 
+import java.io.IOException;
+import java.lang.invoke.MethodHandles;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import api.enums.HTTPStatusCode;
 import api.enums.TestStatus;
-import api.postMethods.*;
+import api.postMethods.TestExecutionLogs;
+import api.postMethods.TestExecutionStart;
+import api.postMethods.TestSessionStart;
 import api.putMethods.TestExecutionFinish;
 import api.putMethods.TestExecutionLabels;
 import api.putMethods.TestRunExecutionFinish;
 import api.putMethods.TestSessionFinish;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.lang.invoke.MethodHandles;
 
 import static api.utils.AuthTokenService.testRunStart;
 
@@ -85,9 +88,9 @@ public class ApiConnection {
 
     public void testRunStart() {
         apiExecution.expectStatus(testRunStart, HTTPStatusCode.OK);
-        String rs = apiExecution.callApiMethod(testRunStart);
-        setTestRunId(JsonService.readId(rs));
-        setTestResultRun(JsonService.readTestStatus(rs));
+        String result = apiExecution.callApiMethod(testRunStart);
+        setTestRunId(JsonService.readId(result));
+        setTestResultRun(JsonService.readTestStatus(result));
         testRunStart.validateResponse();
     }
 
@@ -114,47 +117,43 @@ public class ApiConnection {
     }
 
     public void testExecutionLogs() throws IOException {
-        TestExecutionLogs testExecutionLogs = new TestExecutionLogs(Helper.getHelper().getTestRunId());
-        // testExecutionLogs.setProperties(properties);
+        TestExecutionLogs testExecutionLogs = new TestExecutionLogs(getTestRunId(), getTestId());
         apiExecution.expectStatus(testExecutionLogs, HTTPStatusCode.ACCEPTED);
         apiExecution.callApiMethod(testExecutionLogs);
-        /////////////
     }
 
     public void testSessionStart() throws IOException {
-        TestSessionStart testSessionStart = new TestSessionStart(Helper.getHelper().getTestRunId());
+        TestSessionStart testSessionStart = new TestSessionStart(getTestRunId(), getTestId());
         apiExecution.expectStatus(testSessionStart, HTTPStatusCode.OK);
         testSessionId = JsonService.readId(apiExecution.callApiMethod(testSessionStart));
-         setTestSessionId(JsonService.readId(apiExecution.callApiMethod(testSessionStart)));
-        //Helper.getHelper().setTestSessionId(JsonService.readId(apiExecution.callApiMethod(testSessionStart)));
+        setTestSessionId(JsonService.readId(apiExecution.callApiMethod(testSessionStart)));
         testSessionStart.validateResponse();
-        /////////
     }
 
     public void testSessionFinish() throws IOException {
-        TestSessionFinish testSessionFinish = new TestSessionFinish(getTestRunId(),getTestSessionId());
+        TestSessionFinish testSessionFinish = new TestSessionFinish(getTestRunId(), getTestSessionId(), getTestId());
         apiExecution.expectStatus(testSessionFinish, HTTPStatusCode.OK);
         apiExecution.callApiMethod(testSessionFinish);
         testSessionFinish.validateResponse();
-        ////////////////////////
     }
 
     public void testExecutionLabels() {
-        TestExecutionLabels testExecutionLabels = new TestExecutionLabels(Helper.getHelper().getTestRunId(),
-                Helper.getHelper().getTestId());
+        TestExecutionLabels testExecutionLabels = new TestExecutionLabels(getTestRunId(), getTestId());
         apiExecution.expectStatus(testExecutionLabels, HTTPStatusCode.OK_NO_CONTENT);
         apiExecution.callApiMethod(testExecutionLabels);
         ///
+
     }
 
     public void runTest(TestStatus status) throws IOException {
+       // AuthTokenService.refreshAuthToken();
         testRunStart();
         testExecutionStart();
-        //testExecutionLogs();
+        testExecutionLogs();
         //testExecutionLabels();
         testExecutionFinish(status);
-       // testSessionStart();
+        testSessionStart();
         testRunExecutionFinish();
-       // testSessionFinish();
+        testSessionFinish();
     }
 }

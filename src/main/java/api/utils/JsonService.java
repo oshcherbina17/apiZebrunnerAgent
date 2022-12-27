@@ -12,7 +12,7 @@ public class JsonService {
     public JsonService() {
     }
 
-    public String getAuthToken() {
+    public static String getAuthToken() {
         return authToken;
     }
 

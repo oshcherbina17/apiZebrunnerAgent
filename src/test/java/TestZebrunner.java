@@ -24,6 +24,7 @@ public class TestZebrunner {
     @Test()
     public void runStartTest() throws IOException {
         LOGGER.info("Test run start");
+       // AuthTokenService.getAuthToken();
         apiConnection.testRunStart();
         Assert.assertTrue(apiConnection.getTestResultRun().equalsIgnoreCase(TestStatus.IN_PROGRESS.getStatus()),
                 "Test statuses are not equals");
@@ -75,6 +76,7 @@ public class TestZebrunner {
     @Test
     public void sampleSkippedTest() throws IOException {
         LOGGER.info("Sample skipped test started");
+        //AuthTokenService.refreshAuthToken();
         apiConnection.runTest(TestStatus.SKIPPED);
         String testStatus = apiConnection.getStatus();
         LOGGER.info("Sample skipped test finished");

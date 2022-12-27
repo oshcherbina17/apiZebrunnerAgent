@@ -1,7 +1,6 @@
 package api.putMethods;
 
 import api.ApiBase;
-import api.utils.Helper;
 import com.qaprosoft.carina.core.foundation.utils.R;
 
 public class TestExecutionLabels extends ApiBase {
@@ -10,6 +9,5 @@ public class TestExecutionLabels extends ApiBase {
         replaceUrlPlaceholder("base_url",  R.CONFIG.get("api_url"));
         replaceUrlPlaceholder("testRunId", testRunId);
         replaceUrlPlaceholder("testId", testId);
-
     }
 }

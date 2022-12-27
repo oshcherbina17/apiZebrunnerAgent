@@ -1,6 +1,6 @@
 package api.utils;
 
-public class Helper {
+public class Helper { ////////
 
     private static Helper helper;
 
