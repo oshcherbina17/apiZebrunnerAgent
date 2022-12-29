@@ -13,7 +13,6 @@ public enum HTTPStatusCode {
     UNSUPPORTED_MEDIA_TYPE(415),
     INTERNAL_SERVER_ERROR(500);
 
-
     private int status;
 
     HTTPStatusCode(int status) {

@@ -25,5 +25,4 @@ public class AuthTokenService {
         AuthTokenService authTokenService = new AuthTokenService();
         authTokenService.setAuthToken(apiExecution.callApiMethod(authentication));
     }
-
 }

@@ -10,7 +10,7 @@ public enum TestStatus {
 
     private final String status;
 
-    private TestStatus(String status) {
+    TestStatus(String status) {
         this.status = status;
     }
 

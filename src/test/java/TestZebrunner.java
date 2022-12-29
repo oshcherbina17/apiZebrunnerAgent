@@ -1,5 +1,3 @@
-
-
 import api.enums.TestStatus;
 import api.utils.ApiConnection;
 import api.utils.AuthTokenService;
@@ -8,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 public class TestZebrunner {
@@ -24,7 +21,6 @@ public class TestZebrunner {
     @Test()
     public void runStartTest() {
         LOGGER.info("Test run start");
-       // AuthTokenService.getAuthToken();
         apiConnection.testRunStart();
         Assert.assertTrue(apiConnection.getTestResultRun().equalsIgnoreCase(TestStatus.IN_PROGRESS.getStatus()),
                 "Test statuses are not equals");
@@ -63,7 +59,7 @@ public class TestZebrunner {
     }
 
     @Test
-    public void sampleFailTest()  {
+    public void sampleFailTest() {
         LOGGER.info("Sample fail test started");
         apiConnection.runTest(TestStatus.FAILED);
         String testStatus = apiConnection.getStatus();
@@ -74,9 +70,8 @@ public class TestZebrunner {
     }
 
     @Test
-    public void sampleSkippedTest()  {
+    public void sampleSkippedTest() {
         LOGGER.info("Sample skipped test started");
-        //AuthTokenService.refreshAuthToken();
         apiConnection.runTest(TestStatus.SKIPPED);
         String testStatus = apiConnection.getStatus();
         LOGGER.info("Sample skipped test finished");

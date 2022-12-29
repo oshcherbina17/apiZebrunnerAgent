@@ -13,6 +13,4 @@ public class ApiExecution {
         Response response = method.callAPI();
         return response.asString().isEmpty() ? null : response.asString();
     }
-
-
 }

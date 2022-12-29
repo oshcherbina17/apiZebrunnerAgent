@@ -35,7 +35,6 @@ public class JsonService {
         this.result = result;
     }
 
-
     public static String readId(String response) {
         return id = JsonPath.from(response).get(JsonValues.ID.getValue()).toString();
     }
