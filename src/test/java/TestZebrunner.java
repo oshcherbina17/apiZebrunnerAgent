@@ -76,7 +76,7 @@ public class TestZebrunner {
         String testStatus = apiConnection.getStatus();
         LOGGER.info("Sample skipped test finished");
         LOGGER.info(testStatus);
-        Assert.assertTrue(testStatus.equalsIgnoreCase(TestStatus.SKIPPED.getStatus()),
+        Assert.assertTrue(testStatus.equalsIgnoreCase(TestStatus.FAILED.getStatus()),
                 "Test statuses are not equals");
     }
 }
