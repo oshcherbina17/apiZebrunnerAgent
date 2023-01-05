@@ -1,12 +1,13 @@
-import api.enums.TestStatus;
-import api.utils.ApiConnection;
-import api.utils.AuthTokenService;
+import java.lang.invoke.MethodHandles;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.lang.invoke.MethodHandles;
+import api.enums.TestStatus;
+import api.utils.ApiConnection;
+import api.utils.AuthTokenService;
 
 public class TestZebrunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -49,33 +50,57 @@ public class TestZebrunner {
 
     @Test
     public void sampleSuccessTest() {
-        LOGGER.info("Sample success test started");
+        String startLog = "Sample success test started";
+        LOGGER.info(startLog);
+        apiConnection.setMessage(startLog);
         apiConnection.runTest(TestStatus.PASSED);
+        apiConnection.testExecutionLogs();
         String testStatus = apiConnection.getStatus();
-        LOGGER.info("Sample success test finished");
+        String finishLog="Sample success test finished";
+        LOGGER.info(finishLog);
+        apiConnection.setMessage(finishLog);
+        apiConnection.testExecutionLogs();
         LOGGER.info(testStatus);
+        apiConnection.setMessage(testStatus);
+        apiConnection.testExecutionLogs();
         Assert.assertTrue(testStatus.equalsIgnoreCase(TestStatus.PASSED.getStatus()),
                 "Test statuses are not equals");
     }
 
     @Test
     public void sampleFailTest() {
-        LOGGER.info("Sample fail test started");
+        String startLog = "Sample fail test started";
+        LOGGER.info(startLog);
+        apiConnection.setMessage(startLog);
         apiConnection.runTest(TestStatus.FAILED);
+        apiConnection.testExecutionLogs();
         String testStatus = apiConnection.getStatus();
-        LOGGER.info("Sample failed test finished");
+        String finishLog="Sample failed test finished";
+        LOGGER.info(finishLog);
+        apiConnection.setMessage(finishLog);
+        apiConnection.testExecutionLogs();
         LOGGER.info(testStatus);
+        apiConnection.setMessage(testStatus);
+        apiConnection.testExecutionLogs();
         Assert.assertTrue(testStatus.equalsIgnoreCase(TestStatus.FAILED.getStatus()),
                 "Test statuses are not equals");
     }
 
     @Test
     public void sampleSkippedTest() {
-        LOGGER.info("Sample skipped test started");
+        String startLog = "Sample skipped test started";
+        LOGGER.info(startLog);
+        apiConnection.setMessage(startLog);
         apiConnection.runTest(TestStatus.SKIPPED);
+        apiConnection.testExecutionLogs();
         String testStatus = apiConnection.getStatus();
-        LOGGER.info("Sample skipped test finished");
+        String finishLog="Sample skipped test finished";
+        LOGGER.info(finishLog);
+        apiConnection.setMessage(finishLog);
+        apiConnection.testExecutionLogs();
         LOGGER.info(testStatus);
+        apiConnection.setMessage(testStatus);
+        apiConnection.testExecutionLogs();
         Assert.assertTrue(testStatus.equalsIgnoreCase(TestStatus.FAILED.getStatus()),
                 "Test statuses are not equals");
     }

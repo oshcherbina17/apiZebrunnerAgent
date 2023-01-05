@@ -33,6 +33,8 @@ public class ApiConnection {
 
     private String testResultExecution;
 
+    private String message;
+
     public ApiConnection() {
     }
 
@@ -84,8 +86,16 @@ public class ApiConnection {
         this.testResultExecution = testResultExecution;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public void testRunStart() {
-        TestRunStart testRunStart = new TestRunStart();//
+        TestRunStart testRunStart = new TestRunStart();
         apiExecution.expectStatus(testRunStart, HTTPStatusCode.OK);
         String result = apiExecution.callApiMethod(testRunStart);
         setTestRunId(JsonService.readId(result));
@@ -116,7 +126,7 @@ public class ApiConnection {
     }
 
     public void testExecutionLogs() {
-        TestExecutionLogs testExecutionLogs = new TestExecutionLogs(getTestRunId(), getTestId());
+        TestExecutionLogs testExecutionLogs = new TestExecutionLogs(getTestRunId(), getTestId(), getMessage());
         apiExecution.expectStatus(testExecutionLogs, HTTPStatusCode.ACCEPTED);
         apiExecution.callApiMethod(testExecutionLogs);
     }
@@ -145,7 +155,6 @@ public class ApiConnection {
     public void runTest(TestStatus status) {
         testRunStart();
         testExecutionStart();
-        testExecutionLogs();
         testExecutionLabels();
         testExecutionFinish(status);
         testSessionStart();
