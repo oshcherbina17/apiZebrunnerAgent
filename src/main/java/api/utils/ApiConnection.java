@@ -161,4 +161,11 @@ public class ApiConnection {
         testRunExecutionFinish();
         testSessionFinish();
     }
+
+    public void runTests(TestStatus status) {
+        testExecutionStart();
+        testExecutionLabels();
+        testExecutionFinish(status);
+        testSessionStart();
+    }
 }
