@@ -1,7 +1,7 @@
 {
   "id": "regex:[\\d]",
-  "initiatedAt": "2023-01-06T10:00:00Z",
-  "startedAt": "2023-01-06T10:00:10Z",
+  "initiatedAt": "2023-01-13T10:00:00Z",
+  "startedAt": "2023-01-13T10:00:10Z",
   "status": "COMPLETED",
   "capabilities": {},
   "desiredCapabilities": {

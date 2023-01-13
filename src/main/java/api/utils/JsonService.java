@@ -5,7 +5,9 @@ import io.restassured.path.json.JsonPath;
 
 public class JsonService {
     private static String id;
+
     private static String testStatus;
+
     private static String result;
 
     public JsonService() {

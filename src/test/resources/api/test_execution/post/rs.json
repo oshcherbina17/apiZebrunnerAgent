@@ -3,7 +3,7 @@
   "name": "Verify success login with wrong email",
   "className": "com.qaprosoft.carina.demo.rozetka.RozetkaHomePageTest",
   "methodName": "verifyLoginWithWrongEmail",
-  "startedAt": "2023-01-06T10:00:10Z",
+  "startedAt": "2023-01-13T10:00:10Z",
   "maintainer": "oshcherbina",
   "labels": [
     {

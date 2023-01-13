@@ -168,4 +168,10 @@ public class ApiConnection {
         testExecutionFinish(status);
         testSessionStart();
     }
+
+    public void logInfoAndSetMsg(String logText) {
+        LOGGER.info(logText);
+        setMessage(logText);
+        testExecutionLogs();
+    }
 }
